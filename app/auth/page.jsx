@@ -4,6 +4,7 @@ import {supabase} from "@/services/supabaseClient";
 
 const LoginPage = () => {
 
+
   // Function to handle Google login using Supabase
   const loginWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
