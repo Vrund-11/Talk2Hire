@@ -7,14 +7,14 @@ export const SidebarOptions = [
         path: '/dashboard'
     },
     {
-        name: 'Scheduled Interviews',
-        icon: Calendar,
-        path: '/scheduled-interviews'
-    },
-    {
         name: 'All Interviews',
         icon: List,
         path: '/all-interviews'
+    },
+    {
+        name: 'Scheduled Interviews',
+        icon: Calendar,
+        path: '/scheduled-interviews'
     },
     {
         name: 'Setting',
