@@ -14,11 +14,11 @@ import { SidebarOptions } from "@/services/Constants"
 import { Plus } from "lucide-react"
 import Image from 'next/image'
 import Link from "next/link"
-import {usePathname} from 'next/navigation' 
+import { usePathname } from 'next/navigation'
 
 export function AppSidebar() {
 
-  const path = usePathname() ;
+  const path = usePathname();
 
   return (
     <Sidebar>
@@ -41,10 +41,10 @@ export function AppSidebar() {
             <SidebarMenu className=''>
               {SidebarOptions.map((option, index) => (
                 <SidebarMenuItem key={index}>
-                  <SidebarMenuButton asChild className = {`  ${path === option.path ? 'bg-blue-100 font-semibold' : ''}`}>
+                  <SidebarMenuButton asChild className={`  ${path === option.path ? 'bg-blue-100 font-semibold' : ''}`}>
                     <Link href={option.path} className="flex items-center gap-3 mt-2.5 ">
-                      <option.icon className={` ${path === option.path ? 'text-emerald-600' : ''}`}/>
-                    <span className={`text-[16px]  ${path === option.path ? 'underline decoration-sky-500 text-teal-600' : ''}`}>{option.name}</span>
+                      <option.icon className={` ${path === option.path ? 'text-emerald-600' : ''}`} />
+                      <span className={`text-[16px]  ${path === option.path ? 'underline decoration-sky-500 text-teal-600' : ''}`}>{option.name}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

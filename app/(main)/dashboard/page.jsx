@@ -8,7 +8,7 @@ const Dashboard = () => {
   return (
     <div>
 
-      <WelcomeMessage />
+      {/* <WelcomeMessage /> */}
 
       <h2 className="font-bold mt-5 font-[Poppins] text-lg md:text-2xl">DASHBOARD</h2>
 
@@ -16,7 +16,7 @@ const Dashboard = () => {
 
       <LatestInterviewList />
 
-      </div>
+    </div>
   )
 }
 
