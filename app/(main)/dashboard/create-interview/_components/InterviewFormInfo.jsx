@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { TypeOfInterview } from '@/services/Constants';
@@ -13,8 +13,25 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-const InterviewFormInfo = ({onHandleInputChanges}) => {
-  const [selectedType, setSelectedType] = useState(null);
+const InterviewFormInfo = ({ onHandleInputChanges }) => {
+  const [interviewType, setinterviewType] = useState([])
+
+  useEffect(() => {
+    onHandleInputChanges('type', interviewType);
+    console.log("Selected types:", interviewType); 
+  }, [interviewType]);
+
+  const Addinterviewtype = (type) => {
+    const data = interviewType.includes(type);
+    if (!data) {
+      setinterviewType(prev => [...prev, type])
+    }
+    else {
+      const result = interviewType.filter(item => item !== type);
+      setinterviewType(result);
+    }
+  }
+
 
   return (
     <div className="flex justify-center mt-6">
@@ -25,21 +42,24 @@ const InterviewFormInfo = ({onHandleInputChanges}) => {
         {/* Job Position */}
         <div className="mb-3">
           <h2 className="text-lg font-semibold mb-1">✨ What role are you hiring for?</h2>
-          <Input 
-          onChange={(e) => onHandleInputChanges('jobposition' , e.target.value)}
-          placeholder="e.g. Web Developer 🚀" />
+          <Input
+            onChange={(e) => onHandleInputChanges('job position', e.target.value)}
+            placeholder="e.g. Web Developer 🚀" />
         </div>
 
         {/* Job Description */}
         <div className="mb-3">
           <h2 className="text-lg font-semibold mb-1">📝 Describe the role</h2>
-          <Textarea placeholder="Tell us what makes this role exciting and why someone would love to work here!" className="h-[150px]" />
+          <Textarea
+            onChange={(e) => onHandleInputChanges('Description', e.target.value)}
+            placeholder="Tell us what makes this role exciting and why someone would love to work here!" className="h-[150px]" />
         </div>
 
         {/* Interview Duration */}
         <div className="mb-3">
           <h2 className="text-lg font-semibold mb-1">⏳ How long will the interview take?</h2>
-          <Select>
+          <Select
+            onValueChange={(value) => onHandleInputChanges('duration', value)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select duration" />
             </SelectTrigger>
@@ -56,24 +76,29 @@ const InterviewFormInfo = ({onHandleInputChanges}) => {
         <div>
           <h2 className="text-lg font-semibold mb-2">🎯 Choose your interview style</h2>
           <div className="flex flex-wrap gap-3">
-            {TypeOfInterview.map((type, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedType(index)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all
-                  ${selectedType === index
-                    ? 'bg-teal-300 text-white border-teal-400'
-                    : 'bg-gray-50 text-gray-700 border-gray-300 hover:border-teal-300 hover:text-teal-500'}`}
-              >
-                <type.icon className={`${selectedType === index ? 'text-white' : 'text-teal-500'}`} />
-                <span className="block">{type.name}</span>
-              </button>
-            ))}
+            {TypeOfInterview.map((type, index) => {
+              const isSelected = interviewType.includes(type.name);
+              return (
+                <button
+                  key={index}
+                  onClick={() => {
+                    Addinterviewtype(type.name);
+                  }}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all
+                    ${isSelected
+                      ? 'bg-teal-500 text-white border-teal-500'
+                      : 'bg-gray-50 text-gray-700 border-gray-300 hover:border-teal-300 hover:text-teal-500'}`}
+                >
+                  <type.icon className={`${isSelected ? 'text-white' : 'text-teal-500'}`} />
+                  <span className="block">{type.name}</span>
+                </button>
+              );
+            })}
           </div>
           <div> <GenerateButton /></div>
         </div>
       </div>
-    </div>
+    </div >
   )
 }
 

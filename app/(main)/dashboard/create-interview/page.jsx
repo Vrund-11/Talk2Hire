@@ -15,6 +15,7 @@ const CreateInterview = () => {
       ...prev, [field]: value
     }))
   }
+  console.log('form data :' , formData);
 
   return (
     <div>
@@ -28,4 +29,4 @@ const CreateInterview = () => {
   )
 }
 
-export default CreateInterview
+export default CreateInterview ;
