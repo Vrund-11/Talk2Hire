@@ -4,7 +4,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { TypeOfInterview } from '@/services/Constants';
 import GenerateButton from './GenerateButton';
 
-
 import {
   Select,
   SelectContent,
@@ -13,7 +12,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-const InterviewFormInfo = ({ onHandleInputChanges }) => {
+
+
+
+
+const InterviewFormInfo = ({ onHandleInputChanges , goToNext }) => {
+
+
   const [interviewType, setinterviewType] = useState([])
 
   useEffect(() => {
@@ -43,7 +48,7 @@ const InterviewFormInfo = ({ onHandleInputChanges }) => {
         <div className="mb-3">
           <h2 className="text-lg font-semibold mb-1">✨ What role are you hiring for?</h2>
           <Input
-            onChange={(e) => onHandleInputChanges('job position', e.target.value)}
+            onChange={(e) => onHandleInputChanges('jobPosition', e.target.value)}
             placeholder="e.g. Web Developer 🚀" />
         </div>
 
@@ -59,7 +64,7 @@ const InterviewFormInfo = ({ onHandleInputChanges }) => {
         <div className="mb-3">
           <h2 className="text-lg font-semibold mb-1">⏳ How long will the interview take?</h2>
           <Select
-            onValueChange={(value) => onHandleInputChanges('duration', value)}>
+            onValueChange={(value) => onHandleInputChanges('Duration', value)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select duration" />
             </SelectTrigger>
@@ -95,7 +100,8 @@ const InterviewFormInfo = ({ onHandleInputChanges }) => {
               );
             })}
           </div>
-          <div> <GenerateButton /></div>
+          <div
+          onClick={ goToNext }> <GenerateButton /></div>
         </div>
       </div>
     </div >
