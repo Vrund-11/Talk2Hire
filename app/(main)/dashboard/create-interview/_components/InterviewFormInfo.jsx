@@ -56,7 +56,7 @@ const InterviewFormInfo = ({ onHandleInputChanges , goToNext }) => {
         <div className="mb-3">
           <h2 className="text-lg font-semibold mb-1">📝 Describe the role</h2>
           <Textarea
-            onChange={(e) => onHandleInputChanges('Description', e.target.value)}
+            onChange={(e) => onHandleInputChanges('jobDescription', e.target.value)}
             placeholder="Tell us what makes this role exciting and why someone would love to work here!" className="h-[150px]" />
         </div>
 

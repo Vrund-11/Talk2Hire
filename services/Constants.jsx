@@ -61,23 +61,21 @@ export const TypeOfInterview = [
 // Also, the template variables are written as `{ { jobPosition } }` instead of `${jobPosition}` for template literals, but since this is a prompt string, you probably want to keep them as placeholders for later replacement or for the LLM to interpret. 
 // To fix the syntax error, use backticks for a template literal and escape the line breaks properly.
 
-export const QUESTIONS_PROMPT = `You are an expert technical interviewer.
-Based on the following inputs, generate a well-structured list of high-quality interview questions:
-Job Position: {{ jobPosition }}
-Job Description: {{ jobDescription }}
-Duration: {{ Duration }}
-Type: {{ type }}
+export const QUESTIONS_PROMPT = `
+You are an expert technical interviewer.
+Based on the following inputs, generate a valid JSON array only. 
+Do not include explanations or text outside JSON. 
+If unsure, return an empty JSON array [].
 
-Your task:
-- Analyze the job description to identify key responsibilities, required skills, and expected experience.
-- Generate a list of interview questions.
-- The number of interview questions should depend on the interview duration.
-- Ensure the questions match the tone and structure of the interview type.
-- Format your response in JSON format as an array of questions, like:
-  interviewQuestions = [
-    {
-      question: "Your question here",
-      type: "Technical/Behavioral/Experience/Problem Solving/Leadership"
-    }
-  ]
+Inputs:
+Job Position: {{jobPosition}}
+Job Description: {{jobDescription}}
+Duration: {{Duration}}
+Type: {{type}}
+
+Format strictly like this:
+[
+  { "question": "Your question here", "type": "Technical/Behavioral/Experience/Problem Solving/Leadership" }
+]
 `;
+
