@@ -6,11 +6,11 @@ import React, { useState } from 'react'
 import InterviewForm from './_components/InterviewFormInfo';
 import ListQuestions from './_components/ListQuestions'
 import { toast } from 'sonner';
-import Link from './_components/Link'
+import InterviewLink from './_components/InterviewLink'
 
 const CreateInterview = () => {
   const router = useRouter();
-  const [percent, setpercent] = useState(3);
+  const [percent, setpercent] = useState(1);
   const [formData, setFormData] = useState({});
   const [interviewId, setinterviewId] = useState()
 
@@ -45,7 +45,7 @@ const CreateInterview = () => {
       {percent == 1 ? <InterviewForm onHandleInputChanges={onHandleInputChanges}
         goToNext={onGoToNext} />
         : percent == 2 ? <ListQuestions formData={formData} onCreateLink={(interview_id) => onCreateLink(interview_id)} />
-          : percent == 3 ? <Link interview_id={interviewId} formData={formData} /> : null}
+          : percent == 3 ? <InterviewLink interview_id={interviewId} formData={formData} /> : null}
     </div>
   )
 }
