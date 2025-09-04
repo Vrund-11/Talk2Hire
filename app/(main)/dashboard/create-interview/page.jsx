@@ -30,7 +30,7 @@ const CreateInterview = () => {
     };
   };
 
-  const onCreateLink = () => {
+  const onCreateLink = (interviewId) => {
     setinterviewId(interviewId);
     setpercent(percent + 1);
   }

@@ -5,12 +5,13 @@ import { toast } from 'sonner';
 import QuestionContainer from './QuestionContainer';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from './../../../../../services/supabaseClient';
+import { jsonrepair } from 'jsonrepair';
 
-const ListQuestions = ({ formData  , onCreateLink}) => {
 
-  const [loading, setLoading] = useState(false);
+const ListQuestions = ({ formData, onCreateLink }) => {
+  const [loading, setLoading] = useState(false);       // For AI generation
   const [questionList, setQuestionList] = useState(null);
-  const [saveLoading, setsaveLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false); // For saving interview
 
   useEffect(() => {
     if (!formData) return;
@@ -19,9 +20,8 @@ const ListQuestions = ({ formData  , onCreateLink}) => {
       GenerateQuestions(); // only runs after 500ms of no changes
     }, 500);
 
-    return () => clearTimeout(timer); // cancels if formData changes again within 500ms
+    return () => clearTimeout(timer);
   }, [formData]);
-
 
   const GenerateQuestions = async () => {
     setLoading(true);
@@ -34,20 +34,31 @@ const ListQuestions = ({ formData  , onCreateLink}) => {
 
       // 🧹 Clean AI response
       let Content = String_Content
-        .replace(/```json/g, '') // remove ```json
-        .replace(/```/g, '') // remove ```
-        .replace(/^json/i, '') // remove leading 'json'
+        .replace(/```json/g, '')
+        .replace(/```/g, '')
+        .replace(/^json/i, '')
         .trim();
 
-      // Extract only the JSON array
       const match = Content.match(/\[.*\]/s);
-      if (match) {
-        Content = match[0];
-      }
+      if (match) Content = match[0];
 
       console.log('🧹 Cleaned Content:', Content);
 
-      setQuestionList(JSON.parse(Content));
+      try {
+        // First try normal parse
+        setQuestionList(JSON.parse(Content));
+      } catch (jsonErr) {
+        console.warn("⚠️ JSON Parse failed, attempting repair...", jsonErr);
+        try {
+          const repaired = jsonrepair(Content);
+          setQuestionList(JSON.parse(repaired));
+        } catch (repairErr) {
+          console.error("❌ JSON Repair also failed:", repairErr);
+          toast.error("Failed to parse interview questions. Please try again.");
+          setQuestionList(null);
+        }
+      }
+
     } catch (err) {
       console.error('❌ API/JSON Parse Error:', err);
       toast.error('Failed to load interview questions. Please try again.');
@@ -58,8 +69,15 @@ const ListQuestions = ({ formData  , onCreateLink}) => {
   };
 
   const onFinish = async () => {
-    saveLoading(true);
+    setSaveLoading(true);
+
     const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      toast.error("Authentication required to save interview.");
+      setSaveLoading(false);
+      return;
+    }
+
     const interview_id = uuidv4();
     const { data, error } = await supabase
       .from('Interviews')
@@ -68,13 +86,12 @@ const ListQuestions = ({ formData  , onCreateLink}) => {
           ...formData,
           questionList: questionList,
           userEmail: user.email,
-          interview_id: interview_id,
+          interview_id,
         },
       ])
-      .select()
-    saveLoading(false);
-    
-    oncreateLink(interview_id) ;
+      .select();
+
+    setSaveLoading(false);
 
     if (error) {
       console.error("❌ Supabase Insert Error:", error);
@@ -82,12 +99,10 @@ const ListQuestions = ({ formData  , onCreateLink}) => {
     } else {
       console.log("✅ Interview saved:", data);
       toast.success("Interview saved successfully!");
+      onCreateLink(interview_id);
     }
+  };
 
-  }
-
-
-  // ✅ UI rendering happens here, not inside GenerateQuestions
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
       {loading && (
@@ -105,10 +120,7 @@ const ListQuestions = ({ formData  , onCreateLink}) => {
 
       {!loading && questionList?.length > 0 && (
         <div className="flex flex-col gap-6">
-          {/* Render QuestionContainer */}
           <QuestionContainer questionList={questionList} />
-
-          {/* Finish Button appears only when QuestionContainer is shown */}
           <div className="flex justify-center mt-6">
             <button
               onClick={onFinish}
@@ -135,6 +147,7 @@ const ListQuestions = ({ formData  , onCreateLink}) => {
           </div>
         </div>
       )}
+
       {!loading && !questionList && (
         <p className="text-center text-gray-500">
           No questions generated yet. Please fill in the form and submit.
