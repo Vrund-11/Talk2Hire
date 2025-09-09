@@ -69,10 +69,10 @@ const InterviewFormInfo = ({ onHandleInputChanges , goToNext }) => {
               <SelectValue placeholder="Select duration" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="30">30 Minutes</SelectItem>
-              <SelectItem value="45">45 Minutes</SelectItem>
-              <SelectItem value="60">60 Minutes</SelectItem>
-              <SelectItem value="75">75 Minutes</SelectItem>
+              <SelectItem value="5">5 Minutes</SelectItem>
+              <SelectItem value="10">10 Minutes</SelectItem>
+              <SelectItem value="20">20 Minutes</SelectItem>
+              <SelectItem value="40">40 Minutes</SelectItem>
             </SelectContent>
           </Select>
         </div>
