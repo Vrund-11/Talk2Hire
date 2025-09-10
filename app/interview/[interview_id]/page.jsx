@@ -59,8 +59,10 @@ const Interview = () => {
 
       console.log(Interviews[0]);
 
-      setInterviewContext({name:name,
-         InterviewInformation:Interview[0]});
+      setInterviewContext({
+        name: name,
+        InterviewInformation: Interviews[0]
+      });
 
       router.push('/interview/'+interview_id + '/live');
 
