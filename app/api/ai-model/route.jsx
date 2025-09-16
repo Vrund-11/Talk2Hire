@@ -24,7 +24,7 @@ export async function POST(req) {
             messages: [
                 { role: "user", content: FinalPrompt },
             ],
-            max_tokens: 100, // Limiting tokens to fit within credit limits
+            max_tokens: 300, // Limiting tokens to fit within credit limits
         });
 
         // ✅ extract the AI response
