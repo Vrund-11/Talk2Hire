@@ -17,7 +17,7 @@ export async function POST(req) {
     });
 
     const completion = await openai.chat.completions.create({
-      model: "mistralai/mistral-large",
+      model: 'mistralai/mixtral-8x22b-instruct',
       messages: [
         { role: "system", content: "Respond ONLY with valid JSON. Do not include any extra text outside JSON." },
         { role: "user", content: Final_Feedback_Prompt }

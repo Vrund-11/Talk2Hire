@@ -7,7 +7,7 @@ const WelcomeMessage = () => {
   const { user } = useUser();
 
   return (
-    <main className="w-full">
+    <main className="w-full pt-24"> {/* Increased padding-top to move it down */}
       <div
         className="
           WelcomeTextBox

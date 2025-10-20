@@ -25,8 +25,54 @@ const LiveInterviewPage = () => {
 
 
 
+  const GenerateFeedback = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.post('/api/ai-feedback', { conversation });
+      const parsedFeedback = response.data; // Already a JS object from API
+
+      console.log("Parsed Feedback:", parsedFeedback);
+
+      // ✅ CHANGED SECTION START
+      // Added destructuring for { data, error } to properly handle insert result
+      const { data, error } = await supabase.from('interview-feedback').insert([
+        {
+          name: interviewContext?.name,
+          userEmail: interviewContext?.userEmail,
+          interview_id: interview_id,
+          feedback: parsedFeedback.feedback,
+          recommendation:
+            parsedFeedback.feedback.RecommendationMsg ||
+            parsedFeedback.feedback.recommendationMsg,
+        },
+      ]);
+
+      if (error) {
+        console.error("Error saving feedback:", error);
+        toast.error("Failed to save feedback.");
+      } else {
+        toast.success("Feedback saved successfully!");
+        router.replace(`/interview/${interview_id}/feedback`);
+      }
+      // ✅ CHANGED SECTION END
+
+      setLoading(false);
+
+    } catch (err) {
+      console.error("GenerateFeedback Error:", err.message || err);
+      toast.error("Something went wrong while generating feedback.");
+    }
+  };
+
+
+
+  const listenersAttached = React.useRef(false);
+
   useEffect(() => {
-    const handleMesssage = (message) => {
+    if (listenersAttached.current) return; // ⛔ Don't attach again
+    listenersAttached.current = true;
+
+    const handleMessage = (message) => {
       console.log('Message :', message);
       if (message?.conversation) {
         const convoString = JSON.stringify(message.conversation);
@@ -34,76 +80,29 @@ const LiveInterviewPage = () => {
         setConversation(convoString);
       }
     };
-    vapi.on('message', handleMesssage);
 
+    vapi.on('message', handleMessage);
     vapi.on('call-start', () => {
-      console.log('Call has started.')
-      toast.success('Interview session has started.')
+      console.log('Call has started.');
+      toast.success('Interview session has started.');
     });
-
-    vapi.on('speech-start', () => {
-      console.log('Assistant speech has started.')
-      setActiveUser(false)
-    })
-
-    vapi.on('speech-end', () => {
-      console.log('Assistant speech has ended.')
-      setActiveUser(true);
-    });
-
+    vapi.on('speech-start', () => setActiveUser(false));
+    vapi.on('speech-end', () => setActiveUser(true));
     vapi.on('call-end', () => {
-      console.log('Call has ended.')
+      console.log('Call has ended.');
       toast.success('Interview session has ended.');
       GenerateFeedback();
     });
 
-
-    // Cleanup listener on unmount
     return () => {
-      vapi.off('message', handleMesssage);
-      vapi.off('call-start', () => console.log('Call has started.'));
-      vapi.off('speech-start', () => console.log('speech has started.'));
-      vapi.off('speech-end', () => console.log('speech ended.'));
-      vapi.off('call-end', () => console.log('Call has ended.'));
-    }
+      vapi.off('message', handleMessage);
+      vapi.off('call-start', () => { });
+      vapi.off('speech-start', () => { });
+      vapi.off('speech-end', () => { });
+      vapi.off('call-end', () => { });
+    };
   }, []);
 
-  const GenerateFeedback = async () => {
-    setLoading(true);
-    try {
-      // Call your updated API that returns clean JSON
-      const response = await axios.post('/api/ai-feedback', { conversation });
-      const parsedFeedback = response.data; // Already a JS object from API
-
-      console.log("Parsed Feedback:", parsedFeedback);
-
-      // Insert into Supabase
-     await supabase.from('interview-feedback').insert([
-  {
-    name: interviewContext?.name,
-    userEmail: interviewContext?.userEmail,
-    interview_id: interview_id,
-    feedback: parsedFeedback.feedback,
-    recommendation: parsedFeedback.feedback.recommendationMsg,     
-  },
-]);
-
-      if (error) {
-        console.error("Error saving feedback:", error);
-        toast.error("Failed to save feedback.");
-      } else {
-        toast.success("Feedback saved successfully!");
-      }
-
-      router.replace('/interview/' + interview_id + '/feedback');
-      setLoading(false);
-
-
-    } catch (err) {
-      console.error("GenerateFeedback Error:", err.message || err);
-      toast.error("Something went wrong while generating feedback.");
-    }
-  };
 
 
 
